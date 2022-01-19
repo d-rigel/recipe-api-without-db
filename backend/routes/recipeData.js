@@ -25,8 +25,8 @@ router.get("/", async (req, res) => {
 });
 
 //route for a particular recipe
-//@route  api/v1/recipes/:id
-router.get(`/details/:name`, async (req, res) => {
+//@route  api/v1/recipes/details/:name
+router.get(`/details/:name`, m.mustBeString, async (req, res) => {
   const { name } = req.params;
   await recipe
     .getRecipe(name)

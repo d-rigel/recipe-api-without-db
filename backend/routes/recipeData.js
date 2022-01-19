@@ -1,47 +1,41 @@
 const express = require("express");
 const router = express.Router();
-// const { mustBeInteger } = require("../middlewares/middleware.js");
-// const { getRecipes, getRecipe } = require("../model/recipe.model");
-const m = require("../middlewares/middleware");
-const recipe = require("../model/recipe.model");
+const { mustBeString } = require("../middlewares/middleware.js");
+const { getRecipes, getRecipe } = require("../model/recipe.model");
 
 //route for all recipes
 //@route  api/v1/recipes
 router.get("/", async (req, res) => {
-  await recipe
-    .getRecipes()
-    .then((recipes) => res.json(recipes))
-    .catch((err) => {
-      if (err.status) {
-        res.status(err.status).json({
-          message: err.message,
-        });
-      } else {
-        res.status(500).json({
-          message: err.message,
-        });
-      }
+  try {
+    const result = await getRecipes();
+    return res.json({
+      status: "success",
+      result,
     });
+  } catch (error) {
+    res.json({
+      status: "error",
+      message: error.message,
+    });
+  }
 });
 
 //route for a particular recipe
 //@route  api/v1/recipes/details/:name
-router.get(`/details/:name`, m.mustBeString, async (req, res) => {
-  const { name } = req.params;
-  await recipe
-    .getRecipe(name)
-    .then((recipe) => res.json(recipe))
-    .catch((err) => {
-      if (err.status) {
-        res.status(err.status).json({
-          message: err.message,
-        });
-      } else {
-        res.status(500).json({
-          message: err.message,
-        });
-      }
+router.get(`/details/:name`, mustBeString, async (req, res) => {
+  try {
+    const { name } = req.params;
+    const result = await getRecipe(name);
+    return res.json({
+      status: "success",
+      result,
     });
+  } catch (error) {
+    res.json({
+      status: "error",
+      message: error.message,
+    });
+  }
 });
 
 module.exports = router;

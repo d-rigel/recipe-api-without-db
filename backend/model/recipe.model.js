@@ -31,7 +31,7 @@ const getRecipe = (name) => {
   });
 };
 
-//get a particular post
+//create a recipe
 const insertRecipe = (newRecipe) => {
   return new Promise((resolve, reject) => {
     const date = {
@@ -45,8 +45,27 @@ const insertRecipe = (newRecipe) => {
   });
 };
 
+//updtate a recipe func
+const updateRecipe = (name, newRecipe) => {
+  return new Promise((resolve, reject) => {
+    mustBeInArray(recipeArray, name)
+      .then((recipe) => {
+        const index = recipeArray.findIndex((r) => r.name == recipe.name);
+        const date = {
+          createdAt: recipe.createdAt,
+          updatedAt: newDate(),
+        };
+        recipeArray[index] = { ...date, newRecipe };
+        writeJSONFile(filename, recipeArray);
+        resolve(recipeArray[index]);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
 module.exports = {
   getRecipes,
   getRecipe,
   insertRecipe,
+  updateRecipe,
 };

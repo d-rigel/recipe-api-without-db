@@ -63,9 +63,23 @@ const updateRecipe = (name, newRecipe) => {
   });
 };
 
+//delete a recipe
+const deleteRecipe = (name) => {
+  return new Promise((resolve, reject) => {
+    mustBeInArray(recipeArray, name)
+      .then((recipe) => {
+        recipeArray = recipeArray.filter((r) => r.name !== name);
+        writeJSONFile(filename, recipeArray);
+        resolve(recipeArray[index]);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
 module.exports = {
   getRecipes,
   getRecipe,
   insertRecipe,
   updateRecipe,
+  deleteRecipe,
 };

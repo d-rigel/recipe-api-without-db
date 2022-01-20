@@ -6,6 +6,7 @@ const {
   getRecipe,
   insertRecipe,
   updateRecipe,
+  deleteRecipe,
 } = require("../model/recipe.model");
 
 //route for all recipes
@@ -55,14 +56,19 @@ router.put(`/:name`, mustBeString, async (req, res) => {
         message: "updated successfully",
       });
     }
+  } catch (error) {
+    //Done because of limited functions without using database! lol :(
+    let message = "Unable to update the recipe, please try again later!";
+    if (
+      error.message.includes(
+        "ENOENT: no such file or directory, open '../data/data.json'"
+      )
+    ) {
+      message = "recipe updtate with warning!";
+    }
     return res.json({
       status: "error",
-      message: "Unable to update recipe, please try again later",
-    });
-  } catch (error) {
-    res.json({
-      status: "error",
-      message: error.message,
+      message,
     });
   }
 });
@@ -77,12 +83,12 @@ router.post("/", checkFields, async (req, res) => {
       message: "new recipe has been created",
       result,
     });
-    if (result.name === req.body.name) {
-      return res.json({
-        status: "error",
-        message: "name already exists",
-      });
-    }
+    // if (result.name === req.body.name) {
+    //   return res.json({
+    //     status: "error",
+    //     message: "name already exists",
+    //   });
+    // }
   } catch (error) {
     //Done because of limited functions without using database! lol :(
     let message = "Unable to create the recipe, please try again later!";
@@ -96,6 +102,26 @@ router.post("/", checkFields, async (req, res) => {
     res.json({
       status: "error",
       message,
+    });
+  }
+});
+
+//route for recipe delete
+//@GET  api/v1/recipes/:name
+router.delete(`/:name`, mustBeString, async (req, res) => {
+  try {
+    const { name } = req.params;
+    const result = await deleteRecipe(name);
+    if (result.name) {
+      return res.json({
+        status: "success",
+        message: "recipe deleted",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      status: "error",
+      message: "recipe deleted with warning",
     });
   }
 });

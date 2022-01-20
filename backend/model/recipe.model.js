@@ -1,8 +1,12 @@
 //importing json file
 let filename = "../data/data.json";
 let recipes = require(filename);
-const { mustBeInArray } = require("../helpers/helper.js");
-// const helper = require("../helpers/helper.js");
+const {
+  mustBeInArray,
+  newDate,
+  writeJSONFile,
+} = require("../helpers/helper.js");
+
 let recipeArray = recipes.recipes;
 
 //function to get all recipes
@@ -18,7 +22,7 @@ const getRecipes = () => {
   });
 };
 
-//get a particular post
+//get a particular recipe
 const getRecipe = (name) => {
   return new Promise((resolve, reject) => {
     mustBeInArray(recipeArray, name)
@@ -27,7 +31,22 @@ const getRecipe = (name) => {
   });
 };
 
+//get a particular post
+const insertRecipe = (newRecipe) => {
+  return new Promise((resolve, reject) => {
+    const date = {
+      createdAt: newDate(),
+    };
+
+    newRecipe = { ...date, ...newRecipe };
+    recipeArray.push(newRecipe);
+    writeJSONFile(filename, recipeArray);
+    resolve(newRecipe);
+  });
+};
+
 module.exports = {
   getRecipes,
   getRecipe,
+  insertRecipe,
 };
